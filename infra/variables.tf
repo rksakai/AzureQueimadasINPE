@@ -26,3 +26,7 @@ variable "function_app_name" {
 variable "storage_account_name" {
   default = "stqueimadasfuncpf0807"
 }
+
+variable "teste_func" {
+  deefault = "teste"
+}
