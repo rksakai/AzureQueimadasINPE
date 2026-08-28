@@ -3,17 +3,13 @@ name: CI/CD - Infra e Function (Dia 1)
 on:
   pull_request:
     branches: [ main ]
-    paths:
-      - 'infra/**'
-      - 'function/**'
+    paths: [ 'infra/**', 'function/**' ]
   push:
     branches: [ main ]
-    paths:
-      - 'infra/**'
-      - 'function/**'
+    paths: [ 'infra/**', 'function/**' ]
 
 env:
-  TF_VAR_mysql_admin_password: ${{ secrets.MYSQL_ADMIN_PASSWORD }}
+  TF_VAR_postgres_admin_password: ${{ secrets.POSTGRES_ADMIN_PASSWORD }}
 
 jobs:
   terraform-plan:
@@ -26,9 +22,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
       - name: Azure Login
-	uses: azure/login@v1
-	with:
-	  creds: ${{ secrets.AZURE_CREDENTIALS }}
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - run: terraform init
       - run: terraform plan
 
@@ -39,8 +35,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
       - name: Azure Login
-	uses: azure/login@v1
-	  creds: ${{ secrets.AZURE_CREDENTIALS }}
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Terraform Apply
         working-directory: infra
         run: |
@@ -49,5 +46,5 @@ jobs:
       - name: Deploy Function Code
         uses: Azure/functions-action@v1
         with:
-          app-name: func-queimadas-pf0807
+          app-name: func-queimadas
           package: function
