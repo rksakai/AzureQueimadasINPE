@@ -28,5 +28,5 @@ variable "storage_account_name" {
 }
 
 variable "teste_func" {
-  deefault = "teste"
+  default = "teste"
 }
