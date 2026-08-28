@@ -53,6 +53,18 @@ jobs:
           terraform init
           terraform apply -auto-approve
 
+      - name: Wait for Function App to be indexed
+        run: |
+          echo "Aguardando o Azure Resource Graph indexar a Function App..."
+          for i in $(seq 1 10); do
+            if az functionapp show --name func-queimadas-pf0807 --resource-group rg-monitor-queimadas > /dev/null 2>&1; then
+              echo "Function App encontrada e disponivel na tentativa $i."
+              break
+            fi
+            echo "Tentativa $i/10: recurso ainda nao visivel, aguardando 15s..."
+            sleep 15
+          done
+
       - name: Deploy Function Code
         uses: Azure/functions-action@v1
         with:
