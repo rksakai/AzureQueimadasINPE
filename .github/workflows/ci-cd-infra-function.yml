@@ -9,7 +9,7 @@ on:
     paths: [ 'infra/**', 'function/**' ]
 
 env:
-  TF_VAR_postgres_admin_password: ${{ secrets.MYSQL_ADMIN_PASSWORD }}
+  TF_VAR_mysql_admin_password: ${{ secrets.MYSQL_ADMIN_PASSWORD }}
 
 jobs:
   terraform-plan:
