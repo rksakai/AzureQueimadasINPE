@@ -117,7 +117,7 @@ def coleta_queimadas(req: func.HttpRequest) -> func.HttpResponse:
         conn.close()
     except Exception as e:
         logging.error(f"Erro ao salvar no banco: {e}")
-        return func.HttpResponse(f"Erro ao salvar no banco MySQL: {e}", status_code=500)
+        return func.HttpResponse(f"Erro ao salvar no banco de dados: {e}", status_code=500)
 
     return func.HttpResponse(
         f"{total} focos salvos com sucesso para a data {data_param}.",
