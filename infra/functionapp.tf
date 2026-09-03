@@ -27,12 +27,17 @@ resource "azurerm_linux_function_app" "func" {
       python_version = "3.11"
     }
   }
-
+  
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME = "python"
-    SQL_SERVER               = azurerm_mysql_flexible_server.mysql.fqdn
-    SQL_USER                 = var.mysql_admin_user
-    SQL_PASS                 = var.mysql_admin_password
-    SQL_DB                   = var.sql_db_name
+  
+    SQL_SERVER = azurerm_mysql_flexible_server.mysql.fqdn
+    SQL_USER   = var.mysql_admin_user
+    SQL_PASS   = var.mysql_admin_password
+    SQL_DB     = var.sql_db_name
+
+    SCM_DO_BUILD_DURING_DEPLOYMENT = "1"
+    ENABLE_ORYX_BUILD              = "1"
   }
+
 }

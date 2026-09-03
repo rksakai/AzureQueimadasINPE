@@ -5,7 +5,7 @@ import os
 import logging
 from datetime import datetime, timedelta
 
-app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
+app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 BASE_URL = (
     "https://dataserver-coids.inpe.br"
