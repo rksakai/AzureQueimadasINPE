@@ -12,29 +12,34 @@ BASE_URL = (
     "/queimadas/queimadas/focos/csv/diario/Brasil/"
 )
 
+
 def get_connection():
     return pymysql.connect(
         host=os.environ["SQL_SERVER"],
         user=os.environ["SQL_USER"],
         password=os.environ["SQL_PASS"],
         database=os.environ["SQL_DB"],
-        connect_timeout=30
+        connect_timeout=30,
     )
 
+
 def criar_tabela_se_nao_existir(cursor):
-    cursor.execute("""
+    cursor.execute(
+        """
         CREATE TABLE IF NOT EXISTS focos_queimadas (
-            id          INT AUTO_INCREMENT PRIMARY KEY,
-            lat         DOUBLE,
-            lon         DOUBLE,
-            municipio   VARCHAR(100),
-            estado      VARCHAR(50),
-            bioma       VARCHAR(50),
-            satelite    VARCHAR(50),
-            data_hora   DATETIME,
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            lat DOUBLE,
+            lon DOUBLE,
+            municipio VARCHAR(100),
+            estado VARCHAR(50),
+            bioma VARCHAR(50),
+            satelite VARCHAR(50),
+            data_hora DATETIME,
             coletado_em DATETIME DEFAULT CURRENT_TIMESTAMP
         )
-    """)
+        """
+    )
+
 
 def buscar_focos_inpe(data):
     data_fmt = data.replace("-", "")
@@ -56,7 +61,9 @@ def buscar_focos_inpe(data):
             continue
         row = dict(zip(header, parts))
         focos.append(row)
+
     return focos
+
 
 def inserir_focos(cursor, focos):
     total = 0
@@ -65,25 +72,28 @@ def inserir_focos(cursor, focos):
             cursor.execute(
                 """
                 INSERT INTO focos_queimadas
-                    (lat, lon, municipio, estado, bioma, satelite, data_hora)
+                (lat, lon, municipio, estado, bioma, satelite, data_hora)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """,
                 (
                     float(foco.get("lat", 0) or 0),
                     float(foco.get("lon", 0) or 0),
-                    foco.get("municipio", "").strip(),
-                    foco.get("estado", "").strip(),
-                    foco.get("bioma", "").strip(),
-                    foco.get("satelite", "").strip(),
-                    foco.get("data_hora_gmt", "").strip(),
-                )
+                    (foco.get("municipio") or "").strip(),
+                    (foco.get("estado") or "").strip(),
+                    (foco.get("bioma") or "").strip(),
+                    (foco.get("satelite") or "").strip(),
+                    (foco.get("data_hora_gmt") or "").strip(),
+                ),
             )
-            total = total + 1
+            total += 1
         except Exception as e:
             logging.warning(f"Erro ao inserir foco: {e} | dados: {foco}")
             continue
+
     return total
 
+
+@app.function_name(name="coleta_queimadas")
 @app.route(route="coleta", methods=["GET", "POST"])
 def coleta_queimadas(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Iniciando coleta de focos de queimadas (HTTP Trigger)...")
@@ -111,5 +121,5 @@ def coleta_queimadas(req: func.HttpRequest) -> func.HttpResponse:
 
     return func.HttpResponse(
         f"{total} focos salvos com sucesso para a data {data_param}.",
-        status_code=200
+        status_code=200,
     )
