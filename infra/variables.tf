@@ -30,3 +30,5 @@ variable "storage_account_name" {
 variable "acr_name" {
   default = "acrqueimadas"
 }
+
+
